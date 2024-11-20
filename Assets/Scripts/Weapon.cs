@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
-
+    public bool isActiveWeapon;
 
     //Strzelanie
     public bool isShooting, readyToShoot;
@@ -25,6 +26,27 @@ public class NewBehaviourScript : MonoBehaviour
     public float bulletVelocity = 30;
     public float bulletPrefabLifeTime = 3f;
 
+    //Anim
+    public GameObject muzzleEffect;
+    internal Animator animator;
+
+    //Reload
+    public float reloadTime;
+    public int magazineSize, bulletsLeft;
+    public bool isReloding;
+
+    //pos on fp
+    public Vector3 spawnPostion;
+    public Vector3 spawnRotation;
+
+    public enum WeaponModel
+    {
+        Pistol1911,
+        AK47,
+    }
+
+    public WeaponModel thisWeaponModel;
+
     public enum ShootingMode
     {
         Single,
@@ -38,32 +60,60 @@ public class NewBehaviourScript : MonoBehaviour
     {
         readyToShoot = true;
         burstBulletsLeft = bulletsPerBurst;
+        animator = GetComponent<Animator>();
+
+        bulletsLeft = magazineSize;
+
+
+  
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (currentShootingMode == ShootingMode.Auto)
+        if (isActiveWeapon)
         {
-            isShooting = Input.GetKey(KeyCode.Mouse0);
+            if (bulletsLeft == 0 && isShooting)
+            {
+                SoundManager.Instance.emptySound1911.Play();
+            }
 
-        }
-        else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
-        {
-            isShooting = (Input.GetKeyDown(KeyCode.Mouse0));
-        }
+            if (currentShootingMode == ShootingMode.Auto)
+            {
+                isShooting = Input.GetKey(KeyCode.Mouse0);
 
-        if (readyToShoot && isShooting)
-        {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
-        }
+            }
+            else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
+            {
+                isShooting = (Input.GetKeyDown(KeyCode.Mouse0));
+            }
 
+            if (readyToShoot && isShooting && bulletsLeft > 0)
+            {
+                burstBulletsLeft = bulletsPerBurst;
+                FireWeapon();
+            }
+
+            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && isReloding == false)
+            {
+                Reload();
+            }
+            if (AmmoManager.Instance.ammoDisplay != null)
+            {
+                AmmoManager.Instance.ammoDisplay.text = $"{bulletsLeft / bulletsPerBurst}/{magazineSize / bulletsPerBurst}";
+            }
+        }
     }
 
     private void FireWeapon()
     {
+        bulletsLeft--;
+
+        muzzleEffect.GetComponent<ParticleSystem>().Play();
+        animator.SetTrigger("RECOIL");
+
+        SoundManager.Instance.PlayShootingSound(thisWeaponModel);
+
         readyToShoot = false;
 
         Vector3 shootingDirection = CalculateDirectionAndSpread();
@@ -87,6 +137,29 @@ public class NewBehaviourScript : MonoBehaviour
             burstBulletsLeft--;
             Invoke("FireWeapon", shootingDelay);
         }
+
+        //Update ui
+        if (AmmoManager.Instance.ammoDisplay != null)
+        {
+            AmmoManager.Instance.ammoDisplay.text = $"{bulletsLeft/bulletsPerBurst}/{magazineSize/bulletsPerBurst}";
+        }
+    }
+
+    private void Reload()
+    {
+        SoundManager.Instance.PlayRealoadSound(thisWeaponModel);
+        animator.SetTrigger("RELOAD");
+
+        isReloding = true;
+        readyToShoot = false;
+        Invoke("ReloadComplited", reloadTime);
+    }
+
+    private void ReloadComplited()
+    {
+        bulletsLeft = magazineSize;
+        isReloding = false;
+        readyToShoot = true;
     }
 
     private void ResetShoot()
