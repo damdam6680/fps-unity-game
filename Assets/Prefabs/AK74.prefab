@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 932738864711696806}
   - component: {fileID: 3252797018588143987}
   - component: {fileID: 80565204957778580}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MuzzleFlashEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4794,7 +4794,7 @@ GameObject:
   - component: {fileID: 7800507249162763452}
   - component: {fileID: 5326652839427277438}
   - component: {fileID: 8397209316110266896}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4866,6 +4866,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1938430949582308873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2241446991120829216}
+  m_Layer: 6
+  m_Name: BulletSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2241446991120829216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938430949582308873}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
+  m_LocalPosition: {x: 0.0013, y: -0.001, z: -0.4517}
+  m_LocalScale: {x: 0.2802829, y: 0.052141596, z: 0.78246313}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1995861265497490485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6623637526101398098
 GameObject:
   m_ObjectHideFlags: 0
@@ -4882,7 +4913,7 @@ GameObject:
   - component: {fileID: 3088673937331887112}
   - component: {fileID: 1767716484201467318}
   - component: {fileID: 1374832241340968981}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AK74
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4897,15 +4928,16 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6623637526101398098}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0.269, y: 0.457, z: 0.407}
-  m_LocalScale: {x: 0.49949533, y: 0.95892733, z: 1.2780155}
+  m_LocalScale: {x: 0.49949533, y: 0.9589273, z: 1.278015}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7036445922911477552}
   - {fileID: 7800507249162763452}
   - {fileID: 7982813761631589353}
   - {fileID: 932738864711696806}
+  - {fileID: 2241446991120829216}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &1334886095709588948
@@ -4976,9 +5008,11 @@ MonoBehaviour:
   shootingDelay: 0.15
   bulletsPerBurst: 1
   burstBulletsLeft: 0
-  speadIntensity: 0.1
+  spreadIntensity: 0
+  hipSpreadIntensity: 0
+  adsSpreadIntensity: 0
   bulletPrefab: {fileID: 6235081615791648000, guid: 18d087ede4ed1874b8e9e7385bd8829c, type: 3}
-  bulletSpawn: {fileID: 0}
+  bulletSpawn: {fileID: 2241446991120829216}
   bulletVelocity: 700
   bulletPrefabLifeTime: 3
   muzzleEffect: {fileID: 663131721280658106}
@@ -5082,7 +5116,7 @@ GameObject:
   - component: {fileID: 7982813761631589353}
   - component: {fileID: 5681553214277963594}
   - component: {fileID: 9102229076224434406}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5165,7 +5199,7 @@ GameObject:
   - component: {fileID: 7036445922911477552}
   - component: {fileID: 57472163895050128}
   - component: {fileID: 4308155690696107856}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}

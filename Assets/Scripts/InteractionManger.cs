@@ -9,6 +9,10 @@ public class InteractionManger : MonoBehaviour
 
     public Weapon hoverweapon = null;
 
+    public AmmoBox hoverAmmoBox = null;
+
+    public Throwable hoverThrowable = null;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -55,7 +59,83 @@ public class InteractionManger : MonoBehaviour
                 {
                     WeaponManger.Instance.PickupWeapon(objectHitByRaycast);
                     hoverweapon.GetComponent<Outline>().enabled = false;
-                    hoverweapon = null; // Zresetuj hoverweapon po podniesieniu
+                    hoverweapon = null; 
+                }
+            }
+
+
+            if (objectHitByRaycast.GetComponent<AmmoBox>())
+            {
+                // Obs³uga AmmoBox
+                if (hoverAmmoBox != null && hoverAmmoBox != objectHitByRaycast.GetComponent<AmmoBox>())
+                {
+                    // Wy³¹cz obrys poprzedniej skrzynki, jeœli hoveruje inna
+                    hoverAmmoBox.GetComponent<Outline>().enabled = false;
+                }
+
+                hoverAmmoBox = objectHitByRaycast.GetComponent<AmmoBox>();
+                hoverAmmoBox.GetComponent<Outline>().enabled = true;
+
+
+
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    WeaponManger.Instance.PickupAmmo(hoverAmmoBox);
+                    hoverAmmoBox.GetComponent<Outline>().enabled = false;
+
+                    // Przed zniszczeniem usuñ referencjê
+                    AmmoBox tempAmmoBox = hoverAmmoBox;
+                    hoverAmmoBox = null;
+
+                    // Usuñ obiekt
+                    Destroy(tempAmmoBox.gameObject);
+                }
+            }
+            else
+            {
+                // Jeœli hoverAmmoBox istnieje i promieñ nie trafia w AmmoBox
+                if (hoverAmmoBox != null)
+                {
+                    hoverAmmoBox.GetComponent<Outline>().enabled = false;
+                    hoverAmmoBox = null;
+                }
+            }
+
+            //Granat
+            if (objectHitByRaycast.GetComponent<Throwable>())
+            {
+                // Obs³uga Granat
+                if (hoverThrowable != null && hoverThrowable != objectHitByRaycast.GetComponent<Throwable>())
+                {
+                    
+                    hoverThrowable.GetComponent<Outline>().enabled = false;
+                }
+
+                hoverThrowable = objectHitByRaycast.GetComponent<Throwable>();
+                hoverThrowable.GetComponent<Outline>().enabled = true;
+
+
+
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    WeaponManger.Instance.PickupThrowable(hoverThrowable);
+                    hoverThrowable.GetComponent<Outline>().enabled = false;
+
+                    // Przed zniszczeniem usuñ referencjê
+                    Throwable tempThrowable = hoverThrowable;
+                    hoverThrowable = null;
+
+                    // Usuñ obiekt
+                    Destroy(tempThrowable.gameObject);
+                }
+            }
+            else
+            {
+                // Jeœli hoverThrowable istnieje i promieñ nie trafia w AmmoBox
+                if (hoverThrowable != null)
+                {
+                    hoverThrowable.GetComponent<Outline>().enabled = false;
+                    hoverThrowable = null;
                 }
             }
         }
@@ -67,6 +147,8 @@ public class InteractionManger : MonoBehaviour
             Debug.Log(hoverweapon + " false");
             hoverweapon = null; // Zresetuj hoverweapon
         }
+
+
     }
 }
 

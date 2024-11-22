@@ -18,7 +18,10 @@ public class Weapon : MonoBehaviour
     public int burstBulletsLeft;
 
     //Spred
-    public float speadIntensity;
+    [Header("Spread")]
+    public float spreadIntensity;
+    public float hipSpreadIntensity;
+    public float adsSpreadIntensity;
 
     //Bullet
     public GameObject bulletPrefab;
@@ -39,6 +42,7 @@ public class Weapon : MonoBehaviour
     public Vector3 spawnPostion;
     public Vector3 spawnRotation;
 
+    bool isADS;
     public enum WeaponModel
     {
         Pistol1911,
@@ -64,8 +68,9 @@ public class Weapon : MonoBehaviour
 
         bulletsLeft = magazineSize;
 
+        spreadIntensity = hipSpreadIntensity;
 
-  
+
     }
 
     // Update is called once per frame
@@ -73,6 +78,15 @@ public class Weapon : MonoBehaviour
     {
         if (isActiveWeapon)
         {
+            if (Input.GetMouseButtonDown(1))
+            {
+                EnterADS();
+            }
+            if (Input.GetMouseButtonUp(1)) 
+            {
+                ExitADS();
+            }
+
             if (bulletsLeft == 0 && isShooting)
             {
                 SoundManager.Instance.emptySound1911.Play();
@@ -94,15 +108,27 @@ public class Weapon : MonoBehaviour
                 FireWeapon();
             }
 
-            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && isReloding == false)
+            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && isReloding == false && WeaponManger.Instance.CheckAmmoLeftFOr(thisWeaponModel) > 0)
             {
                 Reload();
             }
-            if (AmmoManager.Instance.ammoDisplay != null)
-            {
-                AmmoManager.Instance.ammoDisplay.text = $"{bulletsLeft / bulletsPerBurst}/{magazineSize / bulletsPerBurst}";
-            }
         }
+    }
+
+    private void EnterADS() 
+    {
+        animator.SetTrigger("enterADS");
+        isADS = true;
+        HudManger.Instance.MiddleDoot.SetActive(false);
+        spreadIntensity = adsSpreadIntensity;
+    }
+
+    private void ExitADS() 
+    {
+        animator.SetTrigger("exitADS");
+        isADS = false;
+        HudManger.Instance.MiddleDoot.SetActive(true);
+        spreadIntensity = hipSpreadIntensity;
     }
 
     private void FireWeapon()
@@ -110,7 +136,15 @@ public class Weapon : MonoBehaviour
         bulletsLeft--;
 
         muzzleEffect.GetComponent<ParticleSystem>().Play();
-        animator.SetTrigger("RECOIL");
+        if (isADS)
+        {
+            animator.SetTrigger("RECOIL_ADS");
+        }
+        else
+        {
+            animator.SetTrigger("RECOIL");
+        }
+        
 
         SoundManager.Instance.PlayShootingSound(thisWeaponModel);
 
@@ -138,17 +172,20 @@ public class Weapon : MonoBehaviour
             Invoke("FireWeapon", shootingDelay);
         }
 
-        //Update ui
-        if (AmmoManager.Instance.ammoDisplay != null)
-        {
-            AmmoManager.Instance.ammoDisplay.text = $"{bulletsLeft/bulletsPerBurst}/{magazineSize/bulletsPerBurst}";
-        }
     }
 
     private void Reload()
     {
         SoundManager.Instance.PlayRealoadSound(thisWeaponModel);
-        animator.SetTrigger("RELOAD");
+        if (isADS)
+        {
+            // reload ads
+        }
+        else
+        {
+          animator.SetTrigger("RELOAD");
+        }
+        
 
         isReloding = true;
         readyToShoot = false;
@@ -157,7 +194,16 @@ public class Weapon : MonoBehaviour
 
     private void ReloadComplited()
     {
-        bulletsLeft = magazineSize;
+        if (WeaponManger.Instance.CheckAmmoLeftFOr(thisWeaponModel) > magazineSize)
+        {
+            bulletsLeft = magazineSize;
+            WeaponManger.Instance.DecreseTotalAmmo(bulletsLeft, thisWeaponModel);
+        }
+        else
+        {
+            bulletsLeft = WeaponManger.Instance.CheckAmmoLeftFOr(thisWeaponModel);
+            WeaponManger.Instance.DecreseTotalAmmo(bulletsLeft, thisWeaponModel);
+        }
         isReloding = false;
         readyToShoot = true;
     }
@@ -187,10 +233,10 @@ public class Weapon : MonoBehaviour
         Vector3 direction = targetPoint - bulletSpawn.position;
 
         // Add spread
-        float x = UnityEngine.Random.Range(-speadIntensity, speadIntensity);
-        float y = UnityEngine.Random.Range(-speadIntensity, speadIntensity);
-        Debug.Log($"Direction: {direction}, Spread X: {x}, Spread Y: {y}");
-        direction += new Vector3(x, y, 0);
+        float z = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+        float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+        Debug.Log($"Direction: {direction}, Spread X: {z}, Spread Y: {y}");
+        direction += new Vector3(0, y, z);
         return direction.normalized;
     }
 
