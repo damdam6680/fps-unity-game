@@ -125,8 +125,6 @@ public class InteractionManger : MonoBehaviour
                     Throwable tempThrowable = hoverThrowable;
                     hoverThrowable = null;
 
-                    // Usuñ obiekt
-                    Destroy(tempThrowable.gameObject);
                 }
             }
             else
